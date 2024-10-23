@@ -1,5 +1,8 @@
 package Enos.projetoSpring.screenmatch.models;
 
+import Enos.projetoSpring.screenmatch.service.ConsumeAPI;
+import Enos.projetoSpring.screenmatch.service.ConvertData;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +16,13 @@ public class Season {
         episodeList = new ArrayList<Episode>();
         this.title = title;
         this.seasonNumber = seasonNumber;
+    }
+
+    public Season(SeasonData seasonData){
+        episodeList = new ArrayList<Episode>();
+        this.title = seasonData.title();
+        this.seasonNumber = seasonData.seasonNumber();
+        this.episodesNumber = seasonData.episodes().length;
     }
 
     public List<Episode> getEpisodeList() {
@@ -39,7 +49,6 @@ public class Season {
                 }
             }
             this.episodeList.add(episode);
-            episodesNumber++;
             return "Episode has been added!";
         } else {
             return "Episode is null";
@@ -53,5 +62,12 @@ public class Season {
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Season title: " + title + '\n' +
+                "Season Number: " + seasonNumber + '\n' +
+                "Episode(s): \n" + episodeList;
     }
 }

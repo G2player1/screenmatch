@@ -51,7 +51,7 @@ public class Title {
         addEmployeesData(titlesData.actors(),EmployeePosition.ACTOR);
     }
 
-    private String printEmployees(){
+    public String printEmployees(){
         String msg = "";
         String director = "Director(s): \n";
         String writer = "Writer(s): \n";
@@ -101,8 +101,8 @@ public class Title {
     }
 
     private Integer getYearData(String year){
-        if(year.contains("-")){
-            return Integer.parseInt(year.substring(0,year.indexOf("-")));
+        if(year.contains("–")){
+            return Integer.parseInt(year.substring(0,year.indexOf("–")));
         } else if (year.equalsIgnoreCase("n/a")){
             return null;
         } else {

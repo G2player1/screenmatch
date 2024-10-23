@@ -1,5 +1,7 @@
 package Enos.projetoSpring.screenmatch;
 
+import Enos.projetoSpring.screenmatch.models.SeasonData;
+import Enos.projetoSpring.screenmatch.models.Serie;
 import Enos.projetoSpring.screenmatch.models.Title;
 import Enos.projetoSpring.screenmatch.models.TitlesData;
 import Enos.projetoSpring.screenmatch.service.ConsumeAPI;
@@ -33,5 +35,8 @@ public class ScreenmatchApplication implements CommandLineRunner {
 		TitlesData titlesData = convertData.getData(jsonResponse, TitlesData.class);
 		Title title = new Title(titlesData);
 		System.out.println(title);
+
+		Serie serie = new Serie(titlesData);
+		System.out.println(serie);
 	}
 }
