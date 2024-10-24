@@ -32,23 +32,23 @@ public class Title {
         this.totalVotes = totalVotes;
     }
 
-    public Title(TitlesData titlesData){
+    public Title(TitleData titleData){
         employeeList = new ArrayList<Employee>();
-        this.title = titlesData.title();
-        this.year = getYearData(titlesData.year());
-        this.runtime = getRuntimeData(titlesData.runtime());
-        this.released = titlesData.released();
-        this.genre = titlesData.genre();
-        this.sinpose = titlesData.plot();
-        this.language = titlesData.language();
-        this.awards = titlesData.awards();
-        this.poster = titlesData.poster();
-        this.rating = getRatingData(titlesData.imdbRating());
-        this.totalVotes = getVotesData(titlesData.imdbVotes());
-        this.type = titlesData.type();
-        addEmployeesData(titlesData.director(),EmployeePosition.DIRECTOR);
-        addEmployeesData(titlesData.writer(),EmployeePosition.WRITER);
-        addEmployeesData(titlesData.actors(),EmployeePosition.ACTOR);
+        this.title = titleData.title();
+        this.year = getYearData(titleData.year());
+        this.runtime = getRuntimeData(titleData.runtime());
+        this.released = titleData.released();
+        this.genre = titleData.genre();
+        this.sinpose = titleData.plot();
+        this.language = titleData.language();
+        this.awards = titleData.awards();
+        this.poster = titleData.poster();
+        this.rating = getRatingData(titleData.imdbRating());
+        this.totalVotes = getVotesData(titleData.imdbVotes());
+        this.type = titleData.type();
+        addEmployeesData(titleData.director(),EmployeePosition.DIRECTOR);
+        addEmployeesData(titleData.writer(),EmployeePosition.WRITER);
+        addEmployeesData(titleData.actors(),EmployeePosition.ACTOR);
     }
 
     public String printEmployees(){

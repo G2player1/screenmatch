@@ -22,7 +22,21 @@ public class Season {
         episodeList = new ArrayList<Episode>();
         this.title = seasonData.title();
         this.seasonNumber = seasonData.seasonNumber();
-        this.episodesNumber = seasonData.episodes().length;
+        this.episodesNumber = seasonData.episodes().size();
+        addEpisodeData(seasonData.episodes());
+    }
+
+    private void addEpisodeData(List<EpisodeSimpleData> episodeList){
+        ConsumeAPI consumeAPI = new ConsumeAPI();
+        for(EpisodeSimpleData episodeSimpleData : episodeList){
+            String address = "https://www.omdbapi.com/?t=" + this.getTitle().replace(" ","+") +
+                    "&season=" + this.getSeasonNumber() +
+                    "&episode=" + episodeSimpleData.episodeNumber() + "&apikey=34451d52";
+            String json = consumeAPI.getData(address);
+            EpisodeDetailedData episodeDetailedData = new ConvertData().getData(json, EpisodeDetailedData.class);
+            Episode episode = new Episode(episodeDetailedData);
+            this.addEpisode(episode);
+        }
     }
 
     public List<Episode> getEpisodeList() {

@@ -11,11 +11,11 @@ public class Episode {
         this.episodeNumber = episodeNumber;
     }
 
-    public Episode(EpisodeData episodeData) {
-        this.title = episodeData.title();
-        this.episodeNumber = episodeData.episodeNumber();
-        this.runtime = Integer.parseInt(episodeData.runtime().replaceAll("([^0-9]+)",""));
-        this.plot = episodeData.episodePlot();
+    public Episode(EpisodeDetailedData episodeDetailedData) {
+        this.title = episodeDetailedData.title();
+        this.episodeNumber = episodeDetailedData.episodeNumber();
+        this.runtime = Integer.parseInt(episodeDetailedData.runtime().replaceAll("([^0-9]+)",""));
+        this.plot = episodeDetailedData.episodePlot();
     }
 
     public String getPlot() {

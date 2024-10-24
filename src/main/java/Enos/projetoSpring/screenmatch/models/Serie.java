@@ -19,12 +19,11 @@ public class Serie extends Title{
         this.totalSeasons = getTotalSeasons();
     }
 
-    public Serie(TitlesData titlesData){
-        super(titlesData);
+    public Serie(TitleData titleData){
+        super(titleData);
         seasonList = new ArrayList<Season>();
-        this.totalSeasons = titlesData.totalSeasons();
+        this.totalSeasons = titleData.totalSeasons();
         this.addSeasonData();
-        this.addEpisodeData();
         this.totalEpisodes = getTotalEpisodes();
     }
 
@@ -37,22 +36,6 @@ public class Serie extends Title{
             SeasonData seasonData = new ConvertData().getData(json,SeasonData.class);
             Season season = new Season(seasonData);
             this.addSeason(season);
-        }
-    }
-
-    private void addEpisodeData(){
-        ConsumeAPI consumeAPI = new ConsumeAPI();
-        for(Season season : seasonList){
-            for(int j = 1;j < season.getEpisodesNumber();j++){
-                System.out.println(season.getEpisodesNumber());
-                String address = "https://www.omdbapi.com/?t=" + this.getTitle().replace(" ","+") +
-                        "&season=" + season.getSeasonNumber() +
-                        "&episode=" + j + "&apikey=34451d52";
-                String json = consumeAPI.getData(address);
-                EpisodeData episodeData = new ConvertData().getData(json,EpisodeData.class);
-                Episode episode = new Episode(episodeData);
-                this.addEpisode(season.getSeasonNumber(),episode);
-            }
         }
     }
 
