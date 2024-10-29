@@ -1,5 +1,7 @@
 package Enos.projetoSpring.screenmatch.service;
 
+import Enos.projetoSpring.screenmatch.Exceptions.CantGetDataException;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -17,7 +19,8 @@ public class ConsumeAPI {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
+            throw new CantGetDataException("Data cannot be recovered");
         }
 
         return response.body();

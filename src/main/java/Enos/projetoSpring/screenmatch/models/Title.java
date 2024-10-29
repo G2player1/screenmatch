@@ -20,18 +20,6 @@ public class Title {
     private Integer totalVotes;
     private String type;
 
-    public Title(String title, Integer year, String genre, String language, Double rating, String sinpose, String awards, Integer totalVotes) {
-        employeeList = new ArrayList<Employee>();
-        this.title = title;
-        this.year = year;
-        this.genre = genre;
-        this.language = language;
-        this.rating = rating;
-        this.sinpose = sinpose;
-        this.awards = awards;
-        this.totalVotes = totalVotes;
-    }
-
     public Title(TitleData titleData){
         employeeList = new ArrayList<Employee>();
         this.title = titleData.title();

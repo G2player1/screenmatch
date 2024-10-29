@@ -3,33 +3,25 @@ package Enos.projetoSpring.screenmatch.models;
 import Enos.projetoSpring.screenmatch.service.ConsumeAPI;
 import Enos.projetoSpring.screenmatch.service.ConvertData;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Serie extends Title{
     private List<Season> seasonList;
     private Integer totalSeasons;
     private Integer totalEpisodes;
 
-    public Serie(String title, Integer year, String genre, String language, Double rating, String sinpose, String awards, Integer totalVotes) {
-        super(title, year, genre, language, rating, sinpose, awards, totalVotes);
-        seasonList = new ArrayList<Season>();
-        this.totalEpisodes = getTotalEpisodes();
-        this.totalSeasons = getTotalSeasons();
-    }
-
     public Serie(TitleData titleData){
         super(titleData);
         seasonList = new ArrayList<Season>();
-        this.totalSeasons = titleData.totalSeasons();
-        this.addSeasonData();
+        this.addSeasonData(titleData.totalSeasons());
+        this.totalSeasons = getTotalSeasons();
         this.totalEpisodes = getTotalEpisodes();
     }
 
-    private void addSeasonData(){
+    private void addSeasonData(int seasonsNumber){
         ConsumeAPI consumeAPI = new ConsumeAPI();
-        for (int i = 1; i <= totalSeasons;i++){
+        for (int i = 1; i <= seasonsNumber;i++){
             String address = "https://www.omdbapi.com/?t=" + this.getTitle().replace(" ","+") +
                     "&season=" + i + "&apikey=34451d52";
             String json = consumeAPI.getData(address);
@@ -41,6 +33,19 @@ public class Serie extends Title{
 
     public List<Season> getSeasonList() {
         return seasonList;
+    }
+
+    public DoubleSummaryStatistics getEpisodeSummaryStatistics(){
+        List<Episode> episodeList = new ArrayList<>();
+        this.getSeasonList().forEach(season -> episodeList.addAll(season.getEpisodeList()));
+        return episodeList.stream()
+                .filter(episode -> episode.getRating() != null)
+                .filter(episode -> episode.getRating() != 0.0)
+                .collect(Collectors.summarizingDouble(Episode::getRating));
+    }
+
+    public DoubleSummaryStatistics getSeasonSummaryStatistics(){
+        return getAverageRatingPerSeason().values().stream().collect(Collectors.summarizingDouble(value -> value));
     }
 
     public Integer getTotalEpisodes() {
@@ -63,6 +68,7 @@ public class Serie extends Title{
                 }
             }
             this.seasonList.add(season);
+            this.totalSeasons = getTotalSeasons();
             this.totalEpisodes = getTotalEpisodes();
             return "Season has been added!";
         }
@@ -99,11 +105,39 @@ public class Serie extends Title{
     }
 
     public String printSeasons(){
-        String msg = "";
+        StringBuilder msg = new StringBuilder();
         for (Season season: seasonList){
-            msg += season.toString();
+            msg.append(season.toString());
         }
-        return msg;
+        return msg.toString();
+    }
+
+    public Map<Integer,Double> getAverageRatingPerSeason(){
+        String result = "";
+        List<Episode> episodeList = new ArrayList<>();
+        this.getSeasonList().forEach(season -> episodeList.addAll(season.getEpisodeList()));
+        return episodeList.stream().filter(e -> e.getRating() != null).collect(Collectors.groupingBy(Episode::getSeasonNumber,Collectors.averagingDouble(Episode::getRating)));
+    }
+
+    public String printAverageRatingPerSeason(){
+        Map<Integer,Double> seasonRating = getAverageRatingPerSeason();
+        String result = "";
+        for(int i = 1;i <= seasonRating.size();i++){
+            result += "Season: " + i + " has rating: " + seasonRating.get(i) + "\n";
+        }
+        return result;
+    }
+
+    public String printDetailedRating(){
+        return getTitle() + " ratings: \n" +
+                "Serie general rating: " + getRating() + "\n" +
+                "Average seasons rating: " + this.getSeasonSummaryStatistics().getAverage() + "\n" +
+                "Max season rating: " + this.getSeasonSummaryStatistics().getMax() + "\n" +
+                "Min season rating: " + this.getSeasonSummaryStatistics().getMin() + "\n" +
+                "Average rating per season: \n" + printAverageRatingPerSeason() +
+                "Average episodes rating: " + this.getEpisodeSummaryStatistics().getAverage() + "\n" +
+                "Max episode rating: " + this.getEpisodeSummaryStatistics().getMax() + "\n" +
+                "Min episode rating: " + this.getEpisodeSummaryStatistics().getMin() + "\n";
     }
 
     @Override
