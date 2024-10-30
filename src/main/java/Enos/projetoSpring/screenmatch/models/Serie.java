@@ -8,15 +8,11 @@ import java.util.stream.Collectors;
 
 public class Serie extends Title{
     private List<Season> seasonList;
-    private Integer totalSeasons;
-    private Integer totalEpisodes;
 
     public Serie(TitleData titleData){
         super(titleData);
         seasonList = new ArrayList<Season>();
         this.addSeasonData(titleData.totalSeasons());
-        this.totalSeasons = getTotalSeasons();
-        this.totalEpisodes = getTotalEpisodes();
     }
 
     private void addSeasonData(int seasonsNumber){
@@ -68,8 +64,6 @@ public class Serie extends Title{
                 }
             }
             this.seasonList.add(season);
-            this.totalSeasons = getTotalSeasons();
-            this.totalEpisodes = getTotalEpisodes();
             return "Season has been added!";
         }
         return "Season is null";
@@ -87,9 +81,7 @@ public class Serie extends Title{
     public String addEpisode(int seasonNumber, Episode episode){
         for (Season season : seasonList){
             if(season.getSeasonNumber() == seasonNumber){
-                String msg = season.addEpisode(episode);
-                this.totalEpisodes = getTotalEpisodes();
-                return msg;
+                return season.addEpisode(episode);
             }
         }
         return "Season does not exist";

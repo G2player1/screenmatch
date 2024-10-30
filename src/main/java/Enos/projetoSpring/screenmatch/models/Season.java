@@ -6,7 +6,6 @@ import java.util.List;
 public class Season {
     private List<Episode> episodeList;
     private String title;
-    private Integer episodesNumber;
     private Integer seasonNumber;
 
     public Season(String title, Integer seasonNumber) {
@@ -20,7 +19,6 @@ public class Season {
         this.title = seasonData.title();
         this.seasonNumber = seasonData.seasonNumber();
         addEpisodeData(seasonData.episodes());
-        this.episodesNumber = seasonData.episodes().size();
     }
 
     private void addEpisodeData(List<EpisodeSimpleData> episodeList){
@@ -54,7 +52,6 @@ public class Season {
                 }
             }
             this.episodeList.add(episode);
-            this.episodesNumber = getEpisodesNumber();
             return "Episode has been added!";
         } else {
             return "Episode is null";
