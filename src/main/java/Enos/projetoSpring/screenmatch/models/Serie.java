@@ -1,5 +1,6 @@
 package Enos.projetoSpring.screenmatch.models;
 
+import Enos.projetoSpring.screenmatch.Exceptions.DontHaveSeasonsException;
 import Enos.projetoSpring.screenmatch.service.ConsumeAPI;
 import Enos.projetoSpring.screenmatch.service.ConvertData;
 
@@ -12,7 +13,10 @@ public class Serie extends Title{
     public Serie(TitleData titleData){
         super(titleData);
         seasonList = new ArrayList<Season>();
-        this.addSeasonData(titleData.totalSeasons());
+        if(titleData.totalSeasons().equalsIgnoreCase("n/a")){
+            throw new DontHaveSeasonsException("this serie do not have any seasons");
+        }
+        this.addSeasonData(Integer.parseInt(titleData.totalSeasons()));
     }
 
     private void addSeasonData(int seasonsNumber){

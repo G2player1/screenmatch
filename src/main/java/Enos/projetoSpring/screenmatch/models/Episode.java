@@ -21,12 +21,16 @@ public class Episode {
         this.title = episodeDetailedData.title();
         this.seasonNumber = episodeDetailedData.seasonNumber();
         this.episodeNumber = episodeDetailedData.episodeNumber();
-        this.runtime = Integer.parseInt(episodeDetailedData.runtime().replaceAll("([^0-9]+)",""));
+        try {
+            this.runtime = Integer.parseInt(episodeDetailedData.runtime().replaceAll("([^0-9]+)",""));
+        } catch (NullPointerException e){
+            this.runtime = null;
+        }
         this.plot = episodeDetailedData.episodePlot();
         try {
             this.released = LocalDate.parse(episodeDetailedData.released());
             this.rating = Double.parseDouble(episodeDetailedData.rating());
-        } catch (DateTimeParseException | NumberFormatException e) {
+        } catch (DateTimeParseException | NumberFormatException | NullPointerException e) {
             this.released = null;
         }
     }

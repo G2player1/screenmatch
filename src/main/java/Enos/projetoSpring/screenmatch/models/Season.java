@@ -65,6 +65,9 @@ public class Season {
             if(episode.getTitle().equalsIgnoreCase(title)){
                 return episode;
             }
+            if(episode.getTitle().contains(title)){
+                return episode;
+            }
         }
         return null;
     }

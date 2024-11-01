@@ -11,5 +11,5 @@ public record TitleData(@JsonAlias("Title") String title, @JsonAlias("Year") Str
                         @JsonAlias("Plot") String plot, @JsonAlias("Language") String language,
                         @JsonAlias("Awards") String awards, @JsonAlias("Poster") String poster,
                         @JsonAlias("imdbRating") String imdbRating, @JsonAlias("imdbVotes") String imdbVotes,
-                        @JsonAlias("Type") String type, @JsonAlias("TotalSeasons") Integer totalSeasons) {
+                        @JsonAlias("Type") String type, @JsonAlias("TotalSeasons") String totalSeasons) {
 }
