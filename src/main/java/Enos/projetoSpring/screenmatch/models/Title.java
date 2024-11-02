@@ -6,22 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Title {
-    private List<Employee> employeeList;
-    private String title;
-    private Integer year;
-    private Integer runtime;
-    private String released;
-    private String genre;
-    private String sinpose;
-    private String language;
-    private String awards;
-    private String poster;
-    private Double rating;
-    private Integer totalVotes;
-    private String type;
+    private final List<Employee> employeeList;
+    private final String title;
+    private final Integer year;
+    private final Integer runtime;
+    private final String released;
+    private final String genre;
+    private final String sinpose;
+    private final String language;
+    private final String awards;
+    private final String poster;
+    private final Double rating;
+    private final Integer totalVotes;
+    private final String type;
 
     public Title(TitleData titleData){
-        employeeList = new ArrayList<Employee>();
+        employeeList = new ArrayList<>();
         this.title = titleData.title();
         this.year = getYearData(titleData.year());
         this.runtime = getRuntimeData(titleData.runtime());
@@ -41,18 +41,18 @@ public class Title {
 
     public String printEmployees(){
         String msg = "";
-        String director = "Director(s): \n";
-        String writer = "Writer(s): \n";
-        String actor = "Actor(s): \n";
+        StringBuilder director = new StringBuilder("Director(s): \n");
+        StringBuilder writer = new StringBuilder("Writer(s): \n");
+        StringBuilder actor = new StringBuilder("Actor(s): \n");
         for (Employee employee : employeeList){
-            if (employee.getPosition() == EmployeePosition.DIRECTOR){
-                director += employee.getName() + "\n";
+            if (employee.position() == EmployeePosition.DIRECTOR){
+                director.append(employee.name()).append("\n");
             }
-            if (employee.getPosition() == EmployeePosition.WRITER){
-                writer += employee.getName() + "\n";
+            if (employee.position() == EmployeePosition.WRITER){
+                writer.append(employee.name()).append("\n");
             }
-            if (employee.getPosition() == EmployeePosition.ACTOR){
-                actor += employee.getName() + "\n";
+            if (employee.position() == EmployeePosition.ACTOR){
+                actor.append(employee.name()).append("\n");
             }
         }
         msg += director;
@@ -159,22 +159,20 @@ public class Title {
         return sinpose;
     }
 
-    public String addEmployee(Employee employee){
+    public void addEmployee(Employee employee){
         if(employee != null){
             for (Employee e : employeeList){
-                if(e.getName().equalsIgnoreCase(employee.getName()) && e.getPosition() == employee.getPosition()){
-                    return "Employee already exists in the list";
+                if(e.name().equalsIgnoreCase(employee.name()) && e.position() == employee.position()){
+                    return;
                 }
             }
             this.employeeList.add(employee);
-            return "Employee has been added!";
         }
-        return "Employee is null";
     }
 
     public Employee getEmployee(Employee employee){
         for (Employee e : employeeList){
-            if(e.getName().equalsIgnoreCase(employee.getName()) && e.getPosition() == employee.getPosition()){
+            if(e.name().equalsIgnoreCase(employee.name()) && e.position() == employee.position()){
                 return e;
             }
         }
@@ -183,7 +181,7 @@ public class Title {
 
     public Employee getEmployee(String name, EmployeePosition employeePosition){
         for (Employee e : employeeList){
-            if(e.getName().equalsIgnoreCase(name) && e.getPosition() == employeePosition){
+            if(e.name().equalsIgnoreCase(name) && e.position() == employeePosition){
                 return e;
             }
         }

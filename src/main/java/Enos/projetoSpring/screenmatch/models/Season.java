@@ -4,18 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Season {
-    private List<Episode> episodeList;
-    private String title;
-    private Integer seasonNumber;
-
-    public Season(String title, Integer seasonNumber) {
-        episodeList = new ArrayList<Episode>();
-        this.title = title;
-        this.seasonNumber = seasonNumber;
-    }
+    private final List<Episode> episodeList;
+    private final String title;
+    private final Integer seasonNumber;
 
     public Season(SeasonData seasonData){
-        episodeList = new ArrayList<Episode>();
+        episodeList = new ArrayList<>();
         this.title = seasonData.title();
         this.seasonNumber = seasonData.seasonNumber();
         addEpisodeData(seasonData.episodes());
@@ -66,6 +60,15 @@ public class Season {
                 return episode;
             }
             if(episode.getTitle().contains(title)){
+                return episode;
+            }
+        }
+        return null;
+    }
+
+    protected Episode getEpisode(int episodeNumber){
+        for (Episode episode: episodeList){
+            if(episode.getEpisodeNumber() == episodeNumber){
                 return episode;
             }
         }

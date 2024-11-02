@@ -8,11 +8,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Serie extends Title{
-    private List<Season> seasonList;
+    private final List<Season> seasonList;
 
     public Serie(TitleData titleData){
         super(titleData);
-        seasonList = new ArrayList<Season>();
+        seasonList = new ArrayList<>();
         if(titleData.totalSeasons().equalsIgnoreCase("n/a")){
             throw new DontHaveSeasonsException("this serie do not have any seasons");
         }
@@ -60,17 +60,15 @@ public class Serie extends Title{
         return seasonList.size();
     }
 
-    public String addSeason(Season season){
+    public void addSeason(Season season){
         if(season != null){
             for (Season s: seasonList){
                 if(Objects.equals(s.getSeasonNumber(), season.getSeasonNumber())){
-                    return "Season already exists";
+                    return;
                 }
             }
             this.seasonList.add(season);
-            return "Season has been added!";
         }
-        return "Season is null";
     }
 
     public Season getSeason(String title){
@@ -82,19 +80,19 @@ public class Serie extends Title{
         return null;
     }
 
-    public String addEpisode(int seasonNumber, Episode episode){
-        for (Season season : seasonList){
-            if(season.getSeasonNumber() == seasonNumber){
-                return season.addEpisode(episode);
-            }
-        }
-        return "Season does not exist";
-    }
-
     public Episode getEpisode(String episodeTitle){
         for (Season season : seasonList){
             if(season.getEpisode(episodeTitle) != null){
                 return season.getEpisode(episodeTitle);
+            }
+        }
+        return null;
+    }
+
+    public Episode getEpisode(Integer seasonNumber,Integer episodeNumber){
+        for (Season season : seasonList){
+            if(Objects.equals(season.getSeasonNumber(), seasonNumber)){
+                return season.getEpisode(episodeNumber);
             }
         }
         return null;
@@ -109,7 +107,6 @@ public class Serie extends Title{
     }
 
     public Map<Integer,Double> getAverageRatingPerSeason(){
-        String result = "";
         List<Episode> episodeList = new ArrayList<>();
         this.getSeasonList().forEach(season -> episodeList.addAll(season.getEpisodeList()));
         return episodeList.stream().filter(e -> e.getRating() != null).collect(Collectors.groupingBy(Episode::getSeasonNumber,Collectors.averagingDouble(Episode::getRating)));
@@ -117,11 +114,11 @@ public class Serie extends Title{
 
     public String printAverageRatingPerSeason(){
         Map<Integer,Double> seasonRating = getAverageRatingPerSeason();
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for(int i = 1;i <= seasonRating.size();i++){
-            result += "Season: " + i + " has rating: " + seasonRating.get(i) + "\n";
+            result.append("Season: ").append(i).append(" has rating: ").append(seasonRating.get(i)).append("\n");
         }
-        return result;
+        return result.toString();
     }
 
     public String printDetailedRating(){
@@ -150,7 +147,6 @@ public class Serie extends Title{
                 "Language: " + getLanguage() + '\n' +
                 "Type: " + getType() + '\n' +
                 "Sinpose: " + getSinpose() + '\n' +
-                "Employee(s): \n" + printEmployees() +
-                "Seasons: \n" + printSeasons();
+                "Employee(s): \n" + printEmployees();
     }
 }

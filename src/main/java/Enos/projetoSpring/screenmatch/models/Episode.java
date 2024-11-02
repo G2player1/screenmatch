@@ -4,18 +4,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 public class Episode {
-    private String title;
-    private Integer seasonNumber;
-    private Integer episodeNumber;
+    private final String title;
+    private final Integer seasonNumber;
+    private final Integer episodeNumber;
     private LocalDate released;
     private Double rating;
     private Integer runtime;
     private String plot;
-
-    public Episode(String title, Integer episodeNumber) {
-        this.title = title;
-        this.episodeNumber = episodeNumber;
-    }
 
     public Episode(EpisodeDetailedData episodeDetailedData) {
         this.title = episodeDetailedData.title();

@@ -10,7 +10,7 @@ public class ScreenMatchController {
     private final ConsumeAPI consumeAPI = new ConsumeAPI();
     private final ConvertData convertData = new ConvertData();
 
-    public TitleData getTitleWebData(String address){
+    public TitleData getTitleDataWeb(String address){
         String jsonResponse = consumeAPI.getData(address);
         return convertData.getData(jsonResponse, TitleData.class);
     }
