@@ -174,6 +174,7 @@ public class MainTest {
 
     private void showSerie(TitleData titleData,Scanner sc){
         try {
+            System.out.println(titleData);
             Serie serie = new Serie(titleData);
             this.serieExistsInList(serie);
             System.out.println(serie);
@@ -204,6 +205,7 @@ public class MainTest {
     }
 
     private void showMovie(TitleData titleData){
+        System.out.println(titleData);
         Movie movie = new Movie(titleData);
         System.out.println(movie);
         this.movieExistsInMovieList(movie);

@@ -14,7 +14,7 @@ public class Serie extends Title{
         super(titleData);
         seasonList = new ArrayList<>();
         if(titleData.totalSeasons().equalsIgnoreCase("n/a")){
-            throw new DontHaveSeasonsException("this serie do not have any seasons");
+            throw new DontHaveSeasonsException("this serie does not have any seasons");
         }
         this.addSeasonData(Integer.parseInt(titleData.totalSeasons()));
     }
@@ -137,7 +137,7 @@ public class Serie extends Title{
     public String toString() {
         return "Poster: " + getPoster() + '\n' +
                 "Title: " + getTitle() + "\n" +
-                "Genre: " + getGenre() + '\n' +
+                "Genres: " + printGenres() + '\n' +
                 "Rating: " + getRating() + "\n" +
                 "Total Votes: " + getTotalVotes() + "\n" +
                 "Year: " + getYear() + "\n" +

@@ -1,17 +1,18 @@
 package Enos.projetoSpring.screenmatch.models;
 
 import Enos.projetoSpring.screenmatch.enums.EmployeePosition;
+import Enos.projetoSpring.screenmatch.enums.Genre;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Title {
     private final List<Employee> employeeList;
+    private final List<Genre> genreList;
     private final String title;
     private final Integer year;
     private final Integer runtime;
     private final String released;
-    private final String genre;
     private final String sinpose;
     private final String language;
     private final String awards;
@@ -22,11 +23,11 @@ public class Title {
 
     public Title(TitleData titleData){
         employeeList = new ArrayList<>();
+        genreList = new ArrayList<>();
         this.title = titleData.title();
         this.year = getYearData(titleData.year());
         this.runtime = getRuntimeData(titleData.runtime());
         this.released = titleData.released();
-        this.genre = titleData.genre();
         this.sinpose = titleData.plot();
         this.language = titleData.language();
         this.awards = titleData.awards();
@@ -37,6 +38,23 @@ public class Title {
         addEmployeesData(titleData.director(),EmployeePosition.DIRECTOR);
         addEmployeesData(titleData.writer(),EmployeePosition.WRITER);
         addEmployeesData(titleData.actors(),EmployeePosition.ACTOR);
+        try {
+            addGenres(titleData.genre());
+        } catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    private void addGenres(String g){
+        if(g.contains(",")){
+            String[] genres = g.split(", ");
+            for(String genre : genres){
+                genreList.add(Genre.fromString(genre));
+            }
+        } else {
+            genreList.add(Genre.fromString(g));
+        }
     }
 
     public String printEmployees(){
@@ -107,6 +125,14 @@ public class Title {
         return i;
     }
 
+    public String printGenres(){
+        String msg = "";
+        for (Genre genre : genreList){
+            msg += genre + ", ";
+        }
+        return msg;
+    }
+
     public String getAwards() {
         return awards;
     }
@@ -141,10 +167,6 @@ public class Title {
 
     public String getLanguage() {
         return language;
-    }
-
-    public String getGenre() {
-        return genre;
     }
 
     public Double getRating() {
@@ -193,7 +215,7 @@ public class Title {
         return "Title{\n" +
                 "poster = " + poster + '\n' +
                 "title = " + title + "\n" +
-                "genre = " + genre + '\n' +
+                "genres = " + printGenres() + "\n" +
                 "rating = " + rating + "\n" +
                 "totalVotes = " + totalVotes + "\n" +
                 "year = " + year + "\n" +
