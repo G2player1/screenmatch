@@ -1,4 +1,4 @@
-package Enos.projetoSpring.screenmatch.models;
+package Enos.projetoSpring.screenmatch.models.omdbData;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

@@ -1,18 +1,39 @@
 package Enos.projetoSpring.screenmatch.models;
 
+import Enos.projetoSpring.screenmatch.models.omdbData.EpisodeSimpleData;
+import Enos.projetoSpring.screenmatch.models.omdbData.SeasonData;
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "seasons")
 public class Season {
-    private final List<Episode> episodeList;
-    private final String title;
-    private final Integer seasonNumber;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long Id;
+    @Column(name = "title",nullable = false)
+    private String title;
+    @Column(name = "seasonNumber",nullable = false)
+    private Integer seasonNumber;
+    @OneToMany(mappedBy = "season",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private List<Episode> episodeList;
+    @ManyToOne
+    private Serie serie;
+
+    public Season(){}
 
     public Season(SeasonData seasonData){
         episodeList = new ArrayList<>();
         this.title = seasonData.title();
         this.seasonNumber = seasonData.seasonNumber();
         addEpisodeData(seasonData.episodes());
+    }
+
+    protected void setSerie(Serie serie){
+        this.serie = serie;
     }
 
     private void addEpisodeData(List<EpisodeSimpleData> episodeList){
@@ -38,17 +59,15 @@ public class Season {
         return title;
     }
 
-    public String addEpisode(Episode episode){
+    public void addEpisode(Episode episode){
         if(episode != null){
             for (Episode e : episodeList){
                 if (e.getTitle().equalsIgnoreCase(episode.getTitle())){
-                    return "Episode already exists";
+                    return;
                 }
             }
+            episode.setSeason(this);
             this.episodeList.add(episode);
-            return "Episode has been added!";
-        } else {
-            return "Episode is null";
         }
     }
 

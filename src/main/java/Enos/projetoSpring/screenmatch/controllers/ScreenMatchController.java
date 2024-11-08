@@ -1,7 +1,7 @@
 package Enos.projetoSpring.screenmatch.controllers;
 
-import Enos.projetoSpring.screenmatch.models.EpisodeDetailedData;
-import Enos.projetoSpring.screenmatch.models.TitleData;
+import Enos.projetoSpring.screenmatch.models.omdbData.EpisodeDetailedData;
+import Enos.projetoSpring.screenmatch.models.omdbData.TitleData;
 import Enos.projetoSpring.screenmatch.service.ConsumeAPI;
 import Enos.projetoSpring.screenmatch.service.ConvertData;
 
