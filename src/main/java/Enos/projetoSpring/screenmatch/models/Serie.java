@@ -1,14 +1,26 @@
 package Enos.projetoSpring.screenmatch.models;
 
 import Enos.projetoSpring.screenmatch.Exceptions.DontHaveSeasonsException;
+import Enos.projetoSpring.screenmatch.models.omdbData.SeasonData;
+import Enos.projetoSpring.screenmatch.models.omdbData.TitleData;
 import Enos.projetoSpring.screenmatch.service.ConsumeAPI;
 import Enos.projetoSpring.screenmatch.service.ConvertData;
+import jakarta.persistence.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Entity
+@Table(name = "series")
 public class Serie extends Title{
-    private final List<Season> seasonList;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @OneToMany(mappedBy = "serie",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private List<Season> seasonList;
+
+    public Serie(){super();}
 
     public Serie(TitleData titleData){
         super(titleData);
@@ -67,6 +79,7 @@ public class Serie extends Title{
                     return;
                 }
             }
+            season.setSerie(this);
             this.seasonList.add(season);
         }
     }

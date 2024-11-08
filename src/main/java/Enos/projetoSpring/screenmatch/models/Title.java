@@ -1,25 +1,45 @@
 package Enos.projetoSpring.screenmatch.models;
 
 import Enos.projetoSpring.screenmatch.enums.EmployeePosition;
-import Enos.projetoSpring.screenmatch.enums.Genre;
+import Enos.projetoSpring.screenmatch.enums.GenreEnum;
+import Enos.projetoSpring.screenmatch.models.omdbData.TitleData;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "titles")
 public class Title {
-    private final List<Employee> employeeList;
-    private final List<Genre> genreList;
-    private final String title;
-    private final Integer year;
-    private final Integer runtime;
-    private final String released;
-    private final String sinpose;
-    private final String language;
-    private final String awards;
-    private final String poster;
-    private final Double rating;
-    private final Integer totalVotes;
-    private final String type;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "title",unique = true,nullable = false)
+    private String title;
+    @Column(name = "runtime")
+    private Integer runtime;
+    @Column(name = "released")
+    private String released;
+    @Column(name = "sinopse")
+    private String sinpose;
+    @Column(name = "language")
+    private String language;
+    @Column(name = "awards")
+    private String awards;
+    @Column(name = "poster",nullable = false)
+    private String poster;
+    private Integer year;
+    private Double rating;
+    private Integer totalVotes;
+    private String type;
+    @OneToMany(mappedBy = "title",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private List<Employee> employeeList;
+    @OneToMany(mappedBy = "title",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private List<Genre> genreList;
+
+    public Title(){}
 
     public Title(TitleData titleData){
         employeeList = new ArrayList<>();
@@ -50,11 +70,21 @@ public class Title {
         if(g.contains(",")){
             String[] genres = g.split(", ");
             for(String genre : genres){
-                genreList.add(Genre.fromString(genre));
+                this.addGenre(new Genre(GenreEnum.fromString(genre)));
             }
         } else {
-            genreList.add(Genre.fromString(g));
+            this.addGenre(new Genre(GenreEnum.fromString(g)));
         }
+    }
+
+    private void addGenre(Genre genre){
+        for (Genre g : genreList){
+            if(genre.getGenre() == g.getGenre()){
+                return;
+            }
+        }
+        genre.setTitle(this);
+        this.genreList.add(genre);
     }
 
     public String printEmployees(){
@@ -63,14 +93,14 @@ public class Title {
         StringBuilder writer = new StringBuilder("Writer(s): \n");
         StringBuilder actor = new StringBuilder("Actor(s): \n");
         for (Employee employee : employeeList){
-            if (employee.position() == EmployeePosition.DIRECTOR){
-                director.append(employee.name()).append("\n");
+            if (employee.getPosition() == EmployeePosition.DIRECTOR){
+                director.append(employee.getName()).append("\n");
             }
-            if (employee.position() == EmployeePosition.WRITER){
-                writer.append(employee.name()).append("\n");
+            if (employee.getPosition() == EmployeePosition.WRITER){
+                writer.append(employee.getName()).append("\n");
             }
-            if (employee.position() == EmployeePosition.ACTOR){
-                actor.append(employee.name()).append("\n");
+            if (employee.getPosition() == EmployeePosition.ACTOR){
+                actor.append(employee.getName()).append("\n");
             }
         }
         msg += director;
@@ -116,7 +146,23 @@ public class Title {
         }
     }
 
+    public List<Genre> getGenreList() {
+        return genreList;
+    }
+
+    public boolean containsGenre(Genre genre){
+        for (Genre g : genreList){
+            if (g.getGenre().equals(genre.getGenre())){
+                return true;
+            }
+        }
+        return false;
+    }
+
     private Integer getVotesData(String vote){
+        if(vote.equalsIgnoreCase("n/a")){
+            return null;
+        }
         String[] votes = vote.split(",");
         int i = 0;
         for(String v : votes){
@@ -126,11 +172,11 @@ public class Title {
     }
 
     public String printGenres(){
-        String msg = "";
-        for (Genre genre : genreList){
-            msg += genre + ", ";
+        StringBuilder msg = new StringBuilder();
+        for (Genre genre : genreList) {
+            msg.append(genre.getGenre()).append(", ");
         }
-        return msg;
+        return msg.toString();
     }
 
     public String getAwards() {
@@ -184,17 +230,18 @@ public class Title {
     public void addEmployee(Employee employee){
         if(employee != null){
             for (Employee e : employeeList){
-                if(e.name().equalsIgnoreCase(employee.name()) && e.position() == employee.position()){
+                if(e.getName().equalsIgnoreCase(employee.getName()) && e.getPosition() == employee.getPosition()){
                     return;
                 }
             }
+            employee.setTitle(this);
             this.employeeList.add(employee);
         }
     }
 
     public Employee getEmployee(Employee employee){
         for (Employee e : employeeList){
-            if(e.name().equalsIgnoreCase(employee.name()) && e.position() == employee.position()){
+            if(e.getName().equalsIgnoreCase(employee.getName()) && e.getPosition() == employee.getPosition()){
                 return e;
             }
         }
@@ -203,7 +250,7 @@ public class Title {
 
     public Employee getEmployee(String name, EmployeePosition employeePosition){
         for (Employee e : employeeList){
-            if(e.name().equalsIgnoreCase(name) && e.position() == employeePosition){
+            if(e.getName().equalsIgnoreCase(name) && e.getPosition() == employeePosition){
                 return e;
             }
         }

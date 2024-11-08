@@ -4,22 +4,33 @@ import Enos.projetoSpring.screenmatch.Exceptions.DontHaveSeasonsException;
 import Enos.projetoSpring.screenmatch.Exceptions.ResultNotFoundException;
 import Enos.projetoSpring.screenmatch.Exceptions.WrongTypeDataException;
 import Enos.projetoSpring.screenmatch.controllers.ScreenMatchController;
+import Enos.projetoSpring.screenmatch.enums.GenreEnum;
 import Enos.projetoSpring.screenmatch.models.*;
+import Enos.projetoSpring.screenmatch.models.omdbData.EpisodeDetailedData;
+import Enos.projetoSpring.screenmatch.models.omdbData.TitleData;
+import Enos.projetoSpring.screenmatch.repository.*;
+import Enos.projetoSpring.screenmatch.service.ConsultChatGPT;
+import com.theokanning.openai.OpenAiHttpException;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class MainTest {
 
     private final ScreenMatchController screenMatchController = new ScreenMatchController();
     private final String ADDRESS = "https://www.omdbapi.com/?t=";
-    private final String APIKEY = "&apikey=34451d52";
+    private final String APIKEY = "&apikey=" + System.getenv("APIKEY_OMDB");
     private final String SEASON = "&season=";
     private final String EPISODE = "&episode=";
-    private final List<Movie> movieList = new ArrayList<>();
-    private final List<Serie> serieList = new ArrayList<>();
+    private final ISerieRepository serieRepository;
+    private final IMovieRepository movieRepository;
+    private final ITitleRepository titleRepository;
+
+    public MainTest(ISerieRepository serieRepository,IMovieRepository movieRepository,
+                    ITitleRepository titleRepository){
+        this.serieRepository = serieRepository;
+        this.movieRepository = movieRepository;
+        this.titleRepository = titleRepository;
+    }
 
     public void main(){
         int i = -1;
@@ -28,8 +39,8 @@ public class MainTest {
             String menu = """
                     1 - Search Title
                     2 - Search Episode
-                    3 - Show searched series
-                    4 - Show searched movies
+                    3 - Show searched titles
+                    4 - Search Titles by Genres
                     
                     0 - left
                     Choose an option:
@@ -58,10 +69,10 @@ public class MainTest {
                     }
                     break;
                 case 3:
-                    serieList.forEach(System.out::println);
+                    this.printDataBaseTitles();
                     break;
                 case 4:
-                    movieList.forEach(System.out::println);
+                    this.getTitlesByGenres(sc);
                     break;
                 case 0:
                     i = 0;
@@ -71,6 +82,51 @@ public class MainTest {
                     break;
             }
         }
+    }
+
+    private void getTitlesByGenres(Scanner sc){
+        List<Title> titleList = titleRepository.findAll();
+        List<Genre> genreList = new ArrayList<>();
+        List<GenreEnum> genreEnumList = new ArrayList<>(Arrays.asList(GenreEnum.values()));
+        int op;
+        while(true) {
+            for(int j = 0;j < genreEnumList.size();j++){
+                System.out.println((j + 1) + " - " + genreEnumList.get(j));
+            }
+            System.out.println("0 - left");
+            System.out.println("Choose one genre: ");
+            op = sc.nextInt();
+            sc.nextLine();
+            if(op == 0){
+                break;
+            }
+            try {
+                Genre genre = new Genre(genreEnumList.get(op - 1));
+                genreList.add(genre);
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        for (Title title : titleList){
+            if(containsGenres(title,genreList)){
+                System.out.println(title);
+            }
+        }
+    }
+
+    private boolean containsGenres(Title title,List<Genre> genreList){
+        int i = 0;
+        for (Genre genre : genreList){
+            if(title.containsGenre(genre)){
+                i++;
+            }
+        }
+        return i == genreList.size();
+    }
+
+    private void printDataBaseTitles(){
+        List<Title> titleList = titleRepository.findAll();
+        titleList.forEach(System.out::println);
     }
 
     private void searchEpisode(Scanner sc){
@@ -127,7 +183,7 @@ public class MainTest {
     }
 
     private Serie searchSerie(String search){
-        Serie serie = this.searchSerieInSerieList(search);
+        Serie serie = this.searchSerieInDB(search);
         if(serie != null){
             return serie;
         }
@@ -150,33 +206,34 @@ public class MainTest {
         return null;
     }
 
-    private Serie searchSerieInSerieList(String search){
-        for (Serie serie : serieList){
-            if(serie.getTitle().equalsIgnoreCase(search)){
-                return serie;
-            }
-        }
-        return null;
-    }
-
     private void searchTitle(Scanner sc){
         System.out.println("Enter a Title name: ");
         String search = sc.nextLine();
-        TitleData titleData = this.getTitleData(search);
-        if(titleData.type() == null){
-            throw new ResultNotFoundException("Result not found to: " + search);
-        } else if(titleData.type().equalsIgnoreCase("movie")){
-            this.showMovie(titleData);
-        } else if (titleData.type().equalsIgnoreCase("series")){
-            this.showSerie(titleData,sc);
+        Title title = searchTitleInDB(search);
+        if(title == null){
+            TitleData titleData = this.getTitleData(search);
+            if(titleData.type() == null){
+                throw new ResultNotFoundException("Result not found to: " + search);
+            } else if(titleData.type().equalsIgnoreCase("movie")){
+                this.showMovie(titleData);
+            } else if (titleData.type().equalsIgnoreCase("series")){
+                this.showSerie(titleData,sc);
+            }
+        } else {
+            if(title.getType().equalsIgnoreCase("series")){
+                Serie serie = searchSerieInDB(search);
+                this.showSerie(serie,sc);
+            } else if (title.getType().equalsIgnoreCase("movie")){
+                Movie movie = searchMovieInDB(search);
+                this.showMovie(movie);
+            }
         }
     }
 
     private void showSerie(TitleData titleData,Scanner sc){
         try {
-            System.out.println(titleData);
             Serie serie = new Serie(titleData);
-            this.serieExistsInList(serie);
+            this.saveSerieInDB(serie);
             System.out.println(serie);
             System.out.println("Do you want to see the seasons?(s/n)");
             String response = sc.nextLine();
@@ -195,29 +252,85 @@ public class MainTest {
 
     }
 
-    private void serieExistsInList(Serie serie){
-        for (Serie serie1 : serieList){
-            if (serie.getTitle().equalsIgnoreCase(serie1.getTitle())){
-                return;
-            }
+    private void showSerie(Serie serie,Scanner sc){
+        System.out.println(serie);
+        System.out.println("Do you want to see the seasons?(s/n)");
+        String response = sc.nextLine();
+        if(response.equalsIgnoreCase("s")){
+            System.out.println(serie.printSeasons());
         }
-        serieList.add(serie);
+        System.out.println("Do you want to see the detailed ratings?(s/n)");
+        response = sc.nextLine();
+        if(response.equalsIgnoreCase("s")){
+            System.out.println(serie.printDetailedRating());
+        }
     }
 
     private void showMovie(TitleData titleData){
-        System.out.println(titleData);
         Movie movie = new Movie(titleData);
+        this.saveMovieInDB(movie);
         System.out.println(movie);
-        this.movieExistsInMovieList(movie);
+        try {
+            System.out.println(ConsultChatGPT.getTranslation(movie.toString(),"portuguese"));
+        } catch (OpenAiHttpException e){
+            System.out.println(e.getMessage());
+        }
     }
 
-    private void movieExistsInMovieList(Movie movie){
-        for(Movie movie1 : movieList){
-            if (movie1.getTitle().equalsIgnoreCase(movie.getTitle())){
+    private void showMovie(Movie movie){
+        System.out.println(movie);
+        try {
+            System.out.println(ConsultChatGPT.getTranslation(movie.toString(),"portuguese"));
+        } catch (OpenAiHttpException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void saveSerieInDB(Serie serie){
+        List<Serie> serieList = serieRepository.findAll();
+        for (Serie serie1 : serieList){
+            if(serie.getTitle().equalsIgnoreCase(serie1.getTitle())){
                 return;
             }
         }
-        movieList.add(movie);
+        serieRepository.save(serie);
+    }
+
+    private void saveMovieInDB(Movie movie){
+        List<Movie> movieList = movieRepository.findAll();
+        for (Movie movie1 : movieList){
+            if(movie.getTitle().equalsIgnoreCase(movie1.getTitle())){
+                return;
+            }
+        }
+        movieRepository.save(movie);
+    }
+
+    private Title searchTitleInDB(String search){
+        List<Optional<Title>> optionalTitleList = titleRepository.findByTitleContainingIgnoreCase(search);
+        if(optionalTitleList.isEmpty()){
+            return null;
+        }
+        Optional<Title> optionalTitle = optionalTitleList.getFirst();
+        return optionalTitle.orElse(null);
+    }
+
+    private Serie searchSerieInDB(String search){
+        List<Optional<Serie>> optionalSerieList = serieRepository.findByTitleContainingIgnoreCase(search);
+        if(optionalSerieList.isEmpty()){
+            return null;
+        }
+        Optional<Serie> optionalSerie = optionalSerieList.getFirst();
+        return optionalSerie.orElse(null);
+    }
+
+    private Movie searchMovieInDB(String search){
+        List<Optional<Movie>> optionalMovieList = movieRepository.findByTitleContainingIgnoreCase(search);
+        if(optionalMovieList.isEmpty()){
+            return null;
+        }
+        Optional<Movie> optionalMovie = optionalMovieList.getFirst();
+        return optionalMovie.orElse(null);
     }
 
     private String getTitleAddress(String search){
