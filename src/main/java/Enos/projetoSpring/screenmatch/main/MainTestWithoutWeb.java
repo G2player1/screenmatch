@@ -15,7 +15,7 @@ import com.theokanning.openai.OpenAiHttpException;
 
 import java.util.*;
 
-public class MainTest {
+public class MainTestWithoutWeb {
 
     private final ScreenMatchController screenMatchController = new ScreenMatchController();
     private final String ADDRESS = "https://www.omdbapi.com/?t=";
@@ -26,8 +26,8 @@ public class MainTest {
     private final IMovieRepository movieRepository;
     private final ITitleRepository titleRepository;
 
-    public MainTest(ISerieRepository serieRepository,IMovieRepository movieRepository,
-                    ITitleRepository titleRepository){
+    public MainTestWithoutWeb(ISerieRepository serieRepository, IMovieRepository movieRepository,
+                              ITitleRepository titleRepository){
         this.serieRepository = serieRepository;
         this.movieRepository = movieRepository;
         this.titleRepository = titleRepository;

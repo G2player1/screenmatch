@@ -148,18 +148,18 @@ public class Serie extends Title{
 
     @Override
     public String toString() {
-        return "Poster: " + getPoster() + '\n' +
-                "Title: " + getTitle() + "\n" +
+        return "Poster: " + poster + '\n' +
+                "Title: " + title + "\n" +
                 "Genres: " + printGenres() + '\n' +
-                "Rating: " + getRating() + "\n" +
-                "Total Votes: " + getTotalVotes() + "\n" +
-                "Year: " + getYear() + "\n" +
-                "Released: " + getReleased() + '\n' +
-                "Runtime: " + getRuntime() + "\n" +
-                "Awards: " + getAwards() + '\n' +
-                "Language: " + getLanguage() + '\n' +
-                "Type: " + getType() + '\n' +
-                "Sinpose: " + getSinpose() + '\n' +
+                "Rating: " + rating + "\n" +
+                "Total Votes: " + totalVotes + "\n" +
+                "Year: " + year + "\n" +
+                "Released: " + released + '\n' +
+                "Runtime: " + runtime + "\n" +
+                "Awards: " + awards + '\n' +
+                "Language: " + language + '\n' +
+                "Type: " + type + '\n' +
+                "Sinpose: " + sinopse + '\n' +
                 "Employee(s): \n" + printEmployees();
     }
 }

@@ -17,27 +17,31 @@ public class Title {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "title",unique = true,nullable = false)
-    private String title;
+    protected String title;
     @Column(name = "runtime")
-    private Integer runtime;
+    protected Integer runtime;
     @Column(name = "released")
-    private String released;
+    protected String released;
     @Column(name = "sinopse")
-    private String sinpose;
+    protected String sinopse;
     @Column(name = "language")
-    private String language;
+    protected String language;
     @Column(name = "awards")
-    private String awards;
+    protected String awards;
     @Column(name = "poster",nullable = false)
-    private String poster;
-    private Integer year;
-    private Double rating;
-    private Integer totalVotes;
-    private String type;
+    protected String poster;
+    @Column(name = "release_year")
+    protected Integer year;
+    @Column(name = "rating")
+    protected Double rating;
+    @Column(name = "total_votes")
+    protected Integer totalVotes;
+    @Column(name = "type")
+    protected String type;
     @OneToMany(mappedBy = "title",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    private List<Employee> employeeList;
+    protected List<Employee> employeeList;
     @OneToMany(mappedBy = "title",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    private List<Genre> genreList;
+    protected List<Genre> genreList;
 
     public Title(){}
 
@@ -48,7 +52,7 @@ public class Title {
         this.year = getYearData(titleData.year());
         this.runtime = getRuntimeData(titleData.runtime());
         this.released = titleData.released();
-        this.sinpose = titleData.plot();
+        this.sinopse = titleData.plot();
         this.language = titleData.language();
         this.awards = titleData.awards();
         this.poster = titleData.poster();
@@ -223,8 +227,8 @@ public class Title {
         return released;
     }
 
-    public String getSinpose() {
-        return sinpose;
+    public String getSinopse() {
+        return sinopse;
     }
 
     public void addEmployee(Employee employee){
@@ -271,7 +275,7 @@ public class Title {
                 "awards = " + awards + '\n' +
                 "language = " + language + '\n' +
                 "type = " + type + '\n' +
-                "sinpose = " + sinpose + '\n' +
+                "sinpose = " + sinopse + '\n' +
                 "employeeList = \n" + printEmployees() +
                 "}\n";
     }

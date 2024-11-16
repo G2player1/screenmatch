@@ -12,6 +12,5 @@ public interface ITitleRepository extends JpaRepository<Title,Long> {
 
     List<Optional<Title>> findByTitleContainingIgnoreCase(String title);
 
-    @Query(value = "SELECT * FROM titles WHERE titles.title ILIKE %:titleSearch%",nativeQuery = true)
-    List<Optional<Title>> searchTitlesByTitle(@Param("titleSearch") String titleSearch);
+    List<Title> findByTypeContainingIgnoreCase(String type);
 }
