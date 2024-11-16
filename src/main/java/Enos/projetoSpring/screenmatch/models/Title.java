@@ -183,6 +183,10 @@ public class Title {
         return msg.toString();
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getAwards() {
         return awards;
     }
