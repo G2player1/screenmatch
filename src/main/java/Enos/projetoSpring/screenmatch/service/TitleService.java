@@ -1,27 +1,31 @@
-package Enos.projetoSpring.screenmatch.controllers;
+package Enos.projetoSpring.screenmatch.service;
 
 import Enos.projetoSpring.screenmatch.dto.EmployeeDTO;
 import Enos.projetoSpring.screenmatch.dto.GenreDTO;
 import Enos.projetoSpring.screenmatch.dto.SerieDTO;
-import Enos.projetoSpring.screenmatch.models.Serie;
 import Enos.projetoSpring.screenmatch.models.Title;
 import Enos.projetoSpring.screenmatch.repository.ITitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@RestController
-public class TitleControler {
+@Service
+public class TitleService {
 
     @Autowired
     private ITitleRepository repository;
 
-    @GetMapping("/series")
-    public List<SerieDTO> getSeries(){
-        return   repository.findByTypeContainingIgnoreCase("series")
-                .stream()
+    public List<SerieDTO> getAllSeries(){
+        return convertSerieDTO(repository.findByTypeContainingIgnoreCase("series"));
+    }
+
+    public List<SerieDTO> getSeriesTop5(){
+        return convertSerieDTO(repository.findTop5ByTypeOrderByRating("series"));
+    }
+
+    public List<SerieDTO> convertSerieDTO(List<Title> serieList){
+        return serieList.stream()
                 .map(s -> new SerieDTO(
                         s.getId() , s.getPoster() ,s.getTitle(),
                         s.getRuntime(), s.getSinopse(), s.getReleased(),
@@ -37,5 +41,4 @@ public class TitleControler {
                         )).toList()
                 )).toList();
     }
-
 }

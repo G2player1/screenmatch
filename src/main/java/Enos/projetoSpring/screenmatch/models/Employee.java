@@ -2,7 +2,6 @@ package Enos.projetoSpring.screenmatch.models;
 
 import Enos.projetoSpring.screenmatch.enums.EmployeePosition;
 import jakarta.persistence.*;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @Entity
 @Table(name = "employees")
