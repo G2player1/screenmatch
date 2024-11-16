@@ -12,7 +12,5 @@ public interface ITitleRepository extends JpaRepository<Title,Long> {
 
     List<Optional<Title>> findByTitleContainingIgnoreCase(String title);
 
-    List<Title> findByTypeContainingIgnoreCase(String type);
-
-    List<Title> findTop5ByTypeOrderByRating(String type);
+    List<Title> findTop5ByOrderByRating();
 }

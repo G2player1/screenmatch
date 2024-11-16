@@ -1,5 +1,6 @@
 package Enos.projetoSpring.screenmatch.models;
 
+import Enos.projetoSpring.screenmatch.Exceptions.DontHaveEpisodesException;
 import Enos.projetoSpring.screenmatch.models.omdbData.EpisodeSimpleData;
 import Enos.projetoSpring.screenmatch.models.omdbData.SeasonData;
 import jakarta.persistence.*;
@@ -29,7 +30,12 @@ public class Season {
         episodeList = new ArrayList<>();
         this.title = seasonData.title();
         this.seasonNumber = seasonData.seasonNumber();
-        addEpisodeData(seasonData.episodes());
+        try {
+            addEpisodeData(seasonData.episodes());
+        } catch (NullPointerException e){
+            throw new DontHaveEpisodesException("this season doesn't have any episodes");
+        }
+
     }
 
     protected void setSerie(Serie serie){

@@ -5,6 +5,8 @@ import Enos.projetoSpring.screenmatch.enums.GenreEnum;
 import Enos.projetoSpring.screenmatch.models.omdbData.TitleData;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class Title {
     @Column(name = "runtime")
     protected Integer runtime;
     @Column(name = "released")
-    protected String released;
+    protected LocalDate released;
     @Column(name = "sinopse")
     protected String sinopse;
     @Column(name = "language")
@@ -51,7 +53,11 @@ public class Title {
         this.title = titleData.title();
         this.year = getYearData(titleData.year());
         this.runtime = getRuntimeData(titleData.runtime());
-        this.released = titleData.released();
+        try {
+            this.released = LocalDate.parse(titleData.released());
+        } catch (DateTimeParseException e){
+            this.released = null;
+        }
         this.sinopse = titleData.plot();
         this.language = titleData.language();
         this.awards = titleData.awards();
@@ -227,7 +233,7 @@ public class Title {
         return rating;
     }
 
-    public String getReleased() {
+    public LocalDate getReleased() {
         return released;
     }
 

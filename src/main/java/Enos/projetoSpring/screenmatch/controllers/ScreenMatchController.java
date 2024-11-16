@@ -1,6 +1,7 @@
 package Enos.projetoSpring.screenmatch.controllers;
 
 import Enos.projetoSpring.screenmatch.dto.SerieDTO;
+import Enos.projetoSpring.screenmatch.dto.TitleDTO;
 import Enos.projetoSpring.screenmatch.service.ConsumeAPI;
 import Enos.projetoSpring.screenmatch.service.ConvertData;
 import Enos.projetoSpring.screenmatch.service.TitleService;
@@ -34,6 +35,16 @@ public class ScreenMatchController {
                 """;
     }
 
+    @GetMapping("/titles")
+    public List<TitleDTO> getTitles(){
+        return titleService.getAllTitles();
+    }
+
+    @GetMapping("/titles/top5")
+    public List<TitleDTO> getTitlesTop5(){
+        return titleService.getTitlesTop5();
+    }
+
     @GetMapping("/series")
     public List<SerieDTO> getSeries(){
         return titleService.getAllSeries();
@@ -42,6 +53,11 @@ public class ScreenMatchController {
     @GetMapping("/series/top5")
     public  List<SerieDTO> getSeriesTop5(){
         return titleService.getSeriesTop5();
+    }
+
+    @GetMapping("/series/lancamentos")
+    public List<SerieDTO> getSeriesByRelease(){
+        return titleService.getSeriesByReleaseDate();
     }
 
 

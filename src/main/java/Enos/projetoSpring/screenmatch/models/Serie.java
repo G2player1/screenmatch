@@ -1,5 +1,7 @@
 package Enos.projetoSpring.screenmatch.models;
 
+import Enos.projetoSpring.screenmatch.Exceptions.CantGetDataException;
+import Enos.projetoSpring.screenmatch.Exceptions.DontHaveEpisodesException;
 import Enos.projetoSpring.screenmatch.Exceptions.DontHaveSeasonsException;
 import Enos.projetoSpring.screenmatch.models.omdbData.SeasonData;
 import Enos.projetoSpring.screenmatch.models.omdbData.TitleData;
@@ -36,10 +38,17 @@ public class Serie extends Title{
         for (int i = 1; i <= seasonsNumber;i++){
             String address = "https://www.omdbapi.com/?t=" + this.getTitle().replace(" ","+") +
                     "&season=" + i + "&apikey=34451d52";
-            String json = consumeAPI.getData(address);
-            SeasonData seasonData = new ConvertData().getData(json,SeasonData.class);
-            Season season = new Season(seasonData);
-            this.addSeason(season);
+            try {
+                String json = consumeAPI.getData(address);
+                SeasonData seasonData = new ConvertData().getData(json,SeasonData.class);
+                Season season = new Season(seasonData);
+                this.addSeason(season);
+            } catch (CantGetDataException e){
+                System.out.println(e.getMessage());
+                System.out.println("Cant get data for season " + i);
+            } catch (DontHaveEpisodesException e){
+                System.out.println(e.getMessage());
+            }
         }
     }
 
