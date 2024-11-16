@@ -16,4 +16,6 @@ public interface ISerieRepository extends JpaRepository<Serie,Long> {
 
     List<Serie> findTop5ByOrderByReleased();
 
+    Serie findSerieById(Long id);
+
 }

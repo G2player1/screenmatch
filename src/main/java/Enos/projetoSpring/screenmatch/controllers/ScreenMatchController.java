@@ -7,6 +7,7 @@ import Enos.projetoSpring.screenmatch.service.ConvertData;
 import Enos.projetoSpring.screenmatch.service.TitleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -60,5 +61,9 @@ public class ScreenMatchController {
         return titleService.getSeriesByReleaseDate();
     }
 
+    @GetMapping("/series/{id}")
+    public SerieDTO getSerieById(@PathVariable(name = "id") Long id){
+        return titleService.getSerieById(id);
+    }
 
 }

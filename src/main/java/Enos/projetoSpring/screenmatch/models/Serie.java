@@ -33,6 +33,11 @@ public class Serie extends Title{
         this.addSeasonData(Integer.parseInt(titleData.totalSeasons()));
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
     private void addSeasonData(int seasonsNumber){
         ConsumeAPI consumeAPI = new ConsumeAPI();
         for (int i = 1; i <= seasonsNumber;i++){

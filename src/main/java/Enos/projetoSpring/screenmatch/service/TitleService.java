@@ -1,7 +1,5 @@
 package Enos.projetoSpring.screenmatch.service;
 
-import Enos.projetoSpring.screenmatch.dto.EmployeeDTO;
-import Enos.projetoSpring.screenmatch.dto.GenreDTO;
 import Enos.projetoSpring.screenmatch.dto.SerieDTO;
 import Enos.projetoSpring.screenmatch.dto.TitleDTO;
 import Enos.projetoSpring.screenmatch.models.Episode;
@@ -26,23 +24,28 @@ public class TitleService {
     private ITitleRepository titleRepository;
 
     public List<TitleDTO> getAllTitles(){
-        return convertTitleDTO(titleRepository.findAll());
+        return convertTitleDTOList(titleRepository.findAll());
     }
 
     public List<TitleDTO> getTitlesTop5(){
-        return convertTitleDTO(titleRepository.findTop5ByOrderByRating());
+        return convertTitleDTOList(titleRepository.findTop5ByOrderByRating());
+    }
+
+    public SerieDTO getSerieById(Long id){
+        return convertSerieDTO(serieRepository.findSerieById(id));
     }
 
     public List<SerieDTO> getAllSeries(){
-        return convertSerieDTO(serieRepository.findAll());
+        serieRepository.findAll().forEach(serie -> System.out.println(serie.getId()));
+        return convertSerieDTOList(serieRepository.findAll());
     }
 
     public List<SerieDTO> getSeriesTop5(){
-        return convertSerieDTO(serieRepository.findTop5ByOrderByRating());
+        return convertSerieDTOList(serieRepository.findTop5ByOrderByRating());
     }
 
     public List<SerieDTO> getSeriesByReleaseDateTest(){
-        return convertSerieDTO(serieRepository.findTop5ByOrderByReleased());
+        return convertSerieDTOList(serieRepository.findTop5ByOrderByReleased());
     }
 
     public List<SerieDTO> getSeriesByReleaseDate(){
@@ -50,55 +53,57 @@ public class TitleService {
         List<Serie> seriesByRelease = new ArrayList<>();
         LocalDate localDate = LocalDate.now();
         localDate = localDate.minusMonths(3);
+        boolean b = false;
         for (Serie serie : serieList){
+            b = false;
+            System.out.println(serie.getId());
             for (Season season: serie.getSeasonList()){
                 for (Episode episode: season.getEpisodeList()){
                     if(episode.getReleased() != null) {
                         if (episode.getReleased().isAfter(localDate)) {
                             if(!seriesByRelease.contains(serie)){
                                 seriesByRelease.add(serie);
+                                b = true;
+                                break;
                             }
                         }
                     }
                 }
+                if(b){break;}
             }
         }
-        return convertSerieDTO(seriesByRelease);
+        return convertSerieDTOList(seriesByRelease);
     }
 
-    public List<SerieDTO> convertSerieDTO(List<Serie> serieList){
+    public List<SerieDTO> convertSerieDTOList(List<Serie> serieList){
         return serieList.stream()
-                .map(s -> new SerieDTO(
-                        s.getId() , s.getPoster() ,s.getTitle(),
-                        s.getRuntime(), s.getSinopse(), s.getReleased(),
-                        s.getAwards(), s.getLanguage(), s.getYear(),
-                        s.getRating(), s.getTotalVotes(),
-                        s.getEmployeeList().stream().map(e -> new EmployeeDTO(
-                                e.getId(),
-                                e.getName(),
-                                e.getPosition())).toList(),
-                        s.getGenreList().stream().map(g -> new GenreDTO(
-                                g.getId(),
-                                g.getGenre()
-                        )).toList()
-                )).toList();
+                .map(this::convertSerieDTO).toList();
     }
 
-    public List<TitleDTO> convertTitleDTO(List<Title> titleList){
+    public List<TitleDTO> convertTitleDTOList(List<Title> titleList){
         return titleList.stream()
-                .map(t -> new TitleDTO(
-                        t.getId() , t.getPoster() ,t.getTitle(),
-                        t.getRuntime(), t.getSinopse(), t.getReleased(),
-                        t.getAwards(), t.getLanguage(), t.getYear(),
-                        t.getRating(), t.getTotalVotes(),
-                        t.getEmployeeList().stream().map(e -> new EmployeeDTO(
-                                e.getId(),
-                                e.getName(),
-                                e.getPosition())).toList(),
-                        t.getGenreList().stream().map(g -> new GenreDTO(
-                                g.getId(),
-                                g.getGenre()
-                        )).toList()
-                )).toList();
+                .map(this::converTitleDTO).toList();
+    }
+
+    public SerieDTO convertSerieDTO(Serie s){
+        return new SerieDTO(
+                s.getId() , s.getPoster() ,s.getTitle(),
+                s.getRuntime(), s.getSinopse(), s.getReleased(),
+                s.getAwards(), s.getLanguage(), s.getYear(),
+                s.getRating(), s.getTotalVotes(),
+                s.printEmployees(),
+                s.printGenres()
+        );
+    }
+
+    public TitleDTO converTitleDTO(Title t){
+        return new TitleDTO(
+                t.getId() , t.getPoster() ,t.getTitle(),
+                t.getRuntime(), t.getSinopse(), t.getReleased(),
+                t.getAwards(), t.getLanguage(), t.getYear(),
+                t.getRating(), t.getTotalVotes(),
+                t.printEmployees(),
+                t.printGenres()
+        );
     }
 }
