@@ -2,6 +2,7 @@ package Enos.projetoSpring.screenmatch.main;
 
 import Enos.projetoSpring.screenmatch.Exceptions.DontHaveSeasonsException;
 import Enos.projetoSpring.screenmatch.Exceptions.ResultNotFoundException;
+import Enos.projetoSpring.screenmatch.Exceptions.WrongEpisodeDataException;
 import Enos.projetoSpring.screenmatch.Exceptions.WrongTypeDataException;
 import Enos.projetoSpring.screenmatch.controllers.ScreenMatchController;
 import Enos.projetoSpring.screenmatch.enums.GenreEnum;
@@ -166,20 +167,34 @@ public class MainTest {
         int episodeNumber = sc.nextInt();
         sc.nextLine();
         Episode episode = serie.getEpisode(seasonNumber,episodeNumber);
-        return searchEpisodeDetailedData(serie,episode);
+        try {
+            return searchEpisodeDetailedData(serie,episode);
+        } catch (WrongEpisodeDataException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     private Episode searchEpisodeByTitle(Serie serie,Scanner sc){
         System.out.println("Enter the episode title: ");
         String episodeTitle = sc.nextLine();
         Episode episode = serie.getEpisode(episodeTitle);
-        return searchEpisodeDetailedData(serie,episode);
+        try {
+            return searchEpisodeDetailedData(serie,episode);
+        } catch (WrongEpisodeDataException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     private Episode searchEpisodeDetailedData(Serie serie,Episode  episode){
-        String address = getEpisodeAddress(serie,episode);
-        EpisodeDetailedData episodeDetailedData = screenMatchController.getEpisodeDetailedData(address);
-        return new Episode(episodeDetailedData);
+        try {
+            String address = getEpisodeAddress(serie, episode);
+            EpisodeDetailedData episodeDetailedData = screenMatchController.getWebData(address,EpisodeDetailedData.class);
+            return new Episode(episodeDetailedData);
+        } catch (NullPointerException e){
+            throw new WrongEpisodeDataException("the episode data is wrong!");
+        }
     }
 
     private Serie searchSerie(String search){
@@ -345,6 +360,6 @@ public class MainTest {
 
     private TitleData getTitleData(String search){
         String address = getTitleAddress(search);
-        return screenMatchController.getTitleDataWeb(address);
+        return screenMatchController.getWebData(address,TitleData.class);
     }
 }

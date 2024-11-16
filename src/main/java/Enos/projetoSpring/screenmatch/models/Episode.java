@@ -14,7 +14,7 @@ public class Episode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "title",nullable = false,unique = true)
+    @Column(name = "title",nullable = false)
     private String title;
     @Column(name = "seasonNumber",nullable = false)
     private Integer seasonNumber;

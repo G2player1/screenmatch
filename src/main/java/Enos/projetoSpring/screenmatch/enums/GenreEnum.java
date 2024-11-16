@@ -29,12 +29,4 @@ public enum GenreEnum {
         }
         throw new IllegalArgumentException("None genre detected");
     }
-    public static GenreEnum fromNumber(Integer value){
-        for(GenreEnum genreEnum : GenreEnum.values()){
-            if(genreEnum.id.intValue() == value){
-                return genreEnum;
-            }
-        }
-        throw new IllegalArgumentException("None genre detected");
-    }
 }
