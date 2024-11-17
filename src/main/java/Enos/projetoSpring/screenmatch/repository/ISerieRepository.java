@@ -18,4 +18,5 @@ public interface ISerieRepository extends JpaRepository<Serie,Long> {
 
     Serie findSerieById(Long id);
 
+
 }

@@ -63,6 +63,14 @@ public class Episode {
         }
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Season getSeason() {
+        return season;
+    }
+
     protected void setSeason(Season season){this.season = season; }
 
     public Integer getSeasonNumber() {

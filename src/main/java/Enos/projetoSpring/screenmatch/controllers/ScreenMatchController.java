@@ -1,7 +1,7 @@
 package Enos.projetoSpring.screenmatch.controllers;
 
+import Enos.projetoSpring.screenmatch.dto.EpisodeDTO;
 import Enos.projetoSpring.screenmatch.dto.SerieDTO;
-import Enos.projetoSpring.screenmatch.dto.TitleDTO;
 import Enos.projetoSpring.screenmatch.service.ConsumeAPI;
 import Enos.projetoSpring.screenmatch.service.ConvertData;
 import Enos.projetoSpring.screenmatch.service.TitleService;
@@ -36,16 +36,6 @@ public class ScreenMatchController {
                 """;
     }
 
-    @GetMapping("/titles")
-    public List<TitleDTO> getTitles(){
-        return titleService.getAllTitles();
-    }
-
-    @GetMapping("/titles/top5")
-    public List<TitleDTO> getTitlesTop5(){
-        return titleService.getTitlesTop5();
-    }
-
     @GetMapping("/series")
     public List<SerieDTO> getSeries(){
         return titleService.getAllSeries();
@@ -64,6 +54,22 @@ public class ScreenMatchController {
     @GetMapping("/series/{id}")
     public SerieDTO getSerieById(@PathVariable(name = "id") Long id){
         return titleService.getSerieById(id);
+    }
+
+    @GetMapping("/series/{id}/temporadas/todas")
+    public List<EpisodeDTO> getEpisodesById(@PathVariable(name = "id") Long id){
+        return titleService.getEpisodesById(id);
+    }
+
+    @GetMapping("/series/{id}/temporadas/{numero}")
+    public List<EpisodeDTO> getEpisodeBySeason(@PathVariable(name = "id") Long id,
+                                               @PathVariable(name = "numero") Integer seasonNumber){
+        return titleService.getEpisodesBySeason(id,seasonNumber);
+    }
+
+    @GetMapping("/series/categoria/{nomeGenero}")
+    public List<SerieDTO> getSeriesByGenre(@PathVariable(name = "nomeGenero") String genre){
+        return titleService.getSeriesByGenre(genre);
     }
 
 }
