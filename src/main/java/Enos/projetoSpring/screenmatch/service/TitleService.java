@@ -56,7 +56,7 @@ public class TitleService {
         List<Serie> filterList = new ArrayList<>();
         for (Serie serie : serieList){
             for (Genre genre : serie.getGenreList()){
-                if (genre.getGenre() == GenreEnum.fromString(g)){
+                if (genre.getGenre() == GenreEnum.fromPortuguese(g)){
                     filterList.add(serie);
                 }
             }

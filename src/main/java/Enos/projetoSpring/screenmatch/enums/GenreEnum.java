@@ -28,7 +28,22 @@ public enum GenreEnum {
             if(genreEnum.genreOMDB.equalsIgnoreCase(value)){
                 return genreEnum;
             }
+        }
+        throw new IllegalArgumentException("None genre detected");
+    }
+
+    public static GenreEnum fromPortuguese(String value){
+        for (GenreEnum genreEnum : GenreEnum.values()){
             if(genreEnum.genreScreenMatch.equalsIgnoreCase(value)){
+                return genreEnum;
+            }
+        }
+        throw new IllegalArgumentException("None genre detected");
+    }
+
+    public static GenreEnum fromId(Integer value){
+        for (GenreEnum genreEnum : GenreEnum.values()){
+            if(genreEnum.id.equals(value)){
                 return genreEnum;
             }
         }
